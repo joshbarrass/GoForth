@@ -10,14 +10,16 @@ import (
 // take an Interpreter pointer as an argument and return an error
 // Any return values should be set in Interpreter.ReturnValue
 var DefaultCoded = map[string]func(*Interpreter) error{
-	"bye": GracefulShutdown,
-	".":   IntStackPop,
-	".s":  IntStackPrint,
-	"+":   IntAdd,
-	"-":   IntSub,
-	"*":   IntMul,
-	"/":   IntDiv,
-	"mod": IntMod,
+	"bye":    GracefulShutdown,
+	".":      IntStackPop,
+	".s":     IntStackPrint,
+	"+":      IntAdd,
+	"-":      IntSub,
+	"*":      IntMul,
+	"/":      IntDiv,
+	"mod":    IntMod,
+	"negate": IntNegate,
+	"abs":    IntAbs,
 }
 
 // DefaultForth defines the functions that are implemented in forth
@@ -156,5 +158,40 @@ func IntMod(i *Interpreter) error {
 	}
 
 	s.Push(val2 % val1)
+	return nil
+}
+
+// IntNegate returns the negative of a numbers
+// ( n -- n )
+func IntNegate(i *Interpreter) error {
+	s := i.IntStack
+
+	val, err := s.Pop()
+	if err != nil {
+		return err
+	}
+
+	s.Push(-val)
+	return nil
+}
+
+const MaxUint = ^uint(0)
+const MaxInt = int(MaxUint >> 1)
+const MinInt = -MaxInt - 1
+const SigningBit = MaxUint - (MaxUint >> 1)
+
+// IntAbs returns the absolute value of a number
+// ( n -- n )
+func IntAbs(i *Interpreter) error {
+	s := i.IntStack
+
+	val, err := s.Pop()
+	if err != nil {
+		return err
+	}
+
+	mask := val >> SigningBit
+	s.Push((val + mask) ^ mask)
+
 	return nil
 }

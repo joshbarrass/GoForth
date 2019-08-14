@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	DIGITS    = "0123456789"
+	DIGITS    = "0123456789-"
 	WORDCHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.!?<>,.@:;+-*/$%^&#"
 )
 
